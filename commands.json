@@ -1,0 +1,83 @@
+[
+    [
+        {
+            "name": "qute",
+            "command": ["qute", "https://searx.flatline.ltd"]
+        },
+        {
+            "name": "gmail",
+
+            "command": ["alacritty", "-t", "mail", "--class", "mail", "-e", "mutt"]
+        },
+        {
+            "name": "up"
+        },
+        {
+            "name": "reddit",
+            "command": ["qute", "https://reddit.com"]
+        },
+        {
+            "name": "wayup",
+            "command": ["qute", "https://wayup.com"]
+        },
+        {
+            "name": "youtube",
+            "command": ["qute", "https://youtube.com"]
+        },
+        {
+            "name": "left"
+        },
+        {
+            "name": "ai",
+            "command": ["openai.sh"]
+        },
+        {
+            "name": "right"
+        },
+        {
+            "name": "grafana",
+            "command": ["qute", "https://wayup.grafana.net"]
+        },
+        {
+            "name": "spotify",
+            "command": ["ncspot.sh"]
+        },
+        {
+            "name": "play",
+            "command": ["playerctl", "--player=ncspot", "play-pause"]
+        },
+        {
+            "name": "down"
+        },
+        {
+            "name": "reload"
+        },
+        {
+            "name": "exit"
+        }
+    ],
+    [
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {
+             "name": "left"
+        },
+        {},
+        {
+             "name": "right"
+        },
+        {},
+        {},
+        {},
+        {},
+        {
+        },
+        {
+            "name": "exit"
+        }
+    ]
+]
