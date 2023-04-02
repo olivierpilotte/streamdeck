@@ -9,6 +9,6 @@ pip install -r requirements.txt
 
 ## Usage
 ```
-cp commands.json.example commands.json
+cp apps.json.example apps.json
 python deck.py
 ```

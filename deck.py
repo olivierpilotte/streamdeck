@@ -18,9 +18,9 @@ CURRENT_PAGE = 0
 # "command": ["qute", ":tab-select 0/1"]
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
-commands_file_path = os.path.join(current_dir, 'commands.json')
+apps_file_path = os.path.join(current_dir, 'apps.json')
 
-with open(commands_file_path, "r") as file:
+with open(apps_file_path, "r") as file:
     apps = json.loads(file.read())
 
 
@@ -126,9 +126,9 @@ def key_change_callback(deck, key, state):
 
 def init(deck):
     global apps
-    global commands_file_path
+    global apps_file_path
 
-    with open(commands_file_path, "r") as file:
+    with open(apps_file_path, "r") as file:
         apps = json.loads(file.read())
 
     for key in range(deck.key_count()):
