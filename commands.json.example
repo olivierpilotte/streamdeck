@@ -1,24 +1,22 @@
 [
-    [
         {
             "name": "qute",
-            "command": ["qute", "https://searx.flatline.ltd"]
+            "command": ["qutebrowser", "https://google.com"]
         },
         {
             "name": "gmail",
-
-            "command": ["alacritty", "-t", "mail", "--class", "mail", "-e", "mutt"]
+            "command": ["qutebrowser", "https://gmail.com"],
         },
         {
             "name": "up"
         },
         {
-            "name": "reddit",
-            "command": ["qute", "https://reddit.com"]
+            "name": "calendar",
+            "command": ["qutebrowser", "https://calendar.google.com"]
         },
         {
-            "name": "wayup",
-            "command": ["qute", "https://wayup.com"]
+            "name": "reddit",
+            "command": ["qute", "https://reddit.com"]
         },
         {
             "name": "youtube",
@@ -35,8 +33,7 @@
             "name": "right"
         },
         {
-            "name": "grafana",
-            "command": ["qute", "https://wayup.grafana.net"]
+
         },
         {
             "name": "spotify",
@@ -56,28 +53,3 @@
             "name": "exit"
         }
     ],
-    [
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {
-             "name": "left"
-        },
-        {},
-        {
-             "name": "right"
-        },
-        {},
-        {},
-        {},
-        {},
-        {
-        },
-        {
-            "name": "exit"
-        }
-    ]
-]
