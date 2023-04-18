@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 
 import json
+import logging
 import os
 import subprocess
+import sys
 import threading
+
 
 from PIL import Image, ImageDraw, ImageFont
 from StreamDeck.DeviceManager import DeviceManager
@@ -11,14 +14,18 @@ from StreamDeck.ImageHelpers import PILHelper
 
 
 ASSETS_PATH = os.path.join(os.path.dirname(__file__), "assets")
-
 CURRENT_PAGE = 0
+PAGE_WRAP = True
 
-# examples
-# "command": ["qute", ":tab-select 0/1"]
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 apps_file_path = os.path.join(current_dir, 'apps.json')
+
+
+logging.basicConfig(
+    stream=sys.stdout, level=logging.INFO,
+    format="%(levelname)s - %(message)s")
+
 
 with open(apps_file_path, "r") as file:
     apps = json.loads(file.read())
@@ -30,7 +37,13 @@ def render_key_image(deck, icon_filename, font_filename, label_text):
 
     draw = ImageDraw.Draw(image)
     font = ImageFont.truetype(font_filename, 14)
-    draw.text((image.width / 2, image.height - 5), text=label_text, font=font, anchor="ms", fill="white")
+    draw.text(
+        (image.width / 2, image.height - 5),
+        text=label_text,
+        font=font,
+        anchor="ms",
+        fill="white"
+    )
 
     return PILHelper.to_native_format(deck, image)
 
@@ -44,7 +57,7 @@ def get_key_style(deck, key, state):
     name = apps[CURRENT_PAGE][key]["name"]
 
     icon = f"{name}.png"
-    font = "Roboto-Regular.ttf"
+    font = "Courier Prime Bold.ttf"
 
     return {
         "name": name,
@@ -61,7 +74,12 @@ def update_key_image(deck, key, state):
         return False
 
     key_style = get_key_style(deck, key, state)
-    image = render_key_image(deck, key_style["icon"], key_style["font"], key_style["label"])
+    image = render_key_image(
+        deck,
+        key_style["icon"],
+        key_style["font"],
+        key_style["label"]
+    )
 
     with deck:
         deck.set_key_image(key, image)
@@ -70,8 +88,7 @@ def update_key_image(deck, key, state):
 def key_change_callback(deck, key, state):
     global CURRENT_PAGE
 
-    # Print new key state
-    # print("Deck {} Key {} = {}".format(deck.id(), key, state), flush=True)
+    logging.debug("Deck {} Key {} = {}".format(deck.id(), key, state), flush=True)
 
     update_key_image(deck, key, state)
 
@@ -87,9 +104,7 @@ def key_change_callback(deck, key, state):
                     deck.close()
 
             case "reload":
-                with deck:
-                    deck.reset()
-                    init(deck)
+                reset(deck)
 
             case "up":
                 subprocess.Popen(["i3-msg", "focus", "up"])
@@ -101,19 +116,21 @@ def key_change_callback(deck, key, state):
                 # subprocess.Popen(["i3-msg", "focus", "left"])
                 if (CURRENT_PAGE) > 0:
                     CURRENT_PAGE -= 1
+                    reset(deck)
 
-                    with deck:
-                        deck.reset()
-                        init(deck)
+                elif PAGE_WRAP:
+                    CURRENT_PAGE = (len(apps) - 1)
+                    reset(deck)
 
             case "right":
                 # subprocess.Popen(["i3-msg", "focus", "right"])
                 if CURRENT_PAGE < (len(apps) - 1):
                     CURRENT_PAGE += 1
+                    reset(deck)
 
-                    with deck:
-                        deck.reset()
-                        init(deck)
+                elif PAGE_WRAP:
+                    CURRENT_PAGE = 0
+                    reset(deck)
 
             case _:
                 with open("/tmp/bob.txt", "w") as file:
@@ -122,6 +139,12 @@ def key_change_callback(deck, key, state):
                         stdout=file,
                         stderr=file
                     )
+
+
+def reset(deck):
+    with deck:
+        deck.reset()
+        init(deck)
 
 
 def init(deck):
@@ -141,20 +164,20 @@ if __name__ == "__main__":
     try:
         streamdecks = DeviceManager().enumerate()
 
-        print("Found {} Stream Deck(s).\n".format(len(streamdecks)))
-
+        logging.info("found {} stream deck(s)".format(len(streamdecks)))
         for index, deck in enumerate(streamdecks):
             if not deck.is_visual():
                 continue
 
             decks.append(deck)
-
             deck.open()
-            deck.reset()
+            reset(deck)
 
-            print("Opened '{}' device (serial number: '{}', fw: '{}')".format(
-                deck.deck_type(), deck.get_serial_number(), deck.get_firmware_version()
-            ))
+            logging.info(
+                f"opened '{deck.deck_type()}' "
+                f"device (serial number: '{deck.get_serial_number()}', "
+                f"fw: '{deck.get_firmware_version()}')"
+            )
 
             deck.set_brightness(50)
             deck.set_key_callback(key_change_callback)
@@ -168,7 +191,7 @@ if __name__ == "__main__":
                     pass
 
     except Exception as e:
-        print(e)
+        logging.exception(e)
 
         for deck in decks:
             with deck:
